@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/*
+ * Webwise AI design tokens — "deep space".
+ * A floating frame of dark glass over a drifting star-and-nebula backdrop; a single violet accent;
+ * colour is reserved for meaning:  accent = brand / interactive / citations   ok = evidence is solid
+ *                                  warn = caution / needs a second look        bad = failed / unsupported
+ * Every text/background pair was checked against WCAG AA in the WORST case (panel over the brightest nebula glow).
+ */
+@theme {
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Crimson Pro Variable", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+
+  /* surfaces */
+  --color-page: #0a0714;
+  --color-surface: #1b1530;
+  --color-raised: #221b38;
+  --color-hover: #2c2542;
+
+  /* lines */
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-line-strong: rgb(255 255 255 / 0.17);
+
+  /* text */
+  --color-fg: #f2eefb;
+  --color-fg-soft: #dcd5ee;
+  --color-fg-muted: #bdb4d3;
+  --color-fg-subtle: #a99fc2;
+
+  /* accent: violet */
+  --color-accent: #a78bfa;
+  --color-accent-hi: #c9b8ff;
+  --color-on-accent: #140a28;
+
+  /* meaning */
+  --color-ok: #7ddbb0;
+  --color-warn: #f3b469;
+  --color-bad: #ff8f9e;
+}
+
+:root { color-scheme: dark; }
+html, body, #root { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-page);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: rgb(167 139 250 / 0.38); }
+
+/* Report titles and section headings stay serif: a research paper floating in space. */
+@layer base {
+  h1, h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; }
+}
+
+/* Custom component classes live in the components layer so Tailwind utilities (e.g. lg:hidden, !min-h-10) can override them. */
+@layer components {
+  /* ---- surfaces ---- */
+  .panel { background: rgb(14 10 26 / 0.64); }
+  .glass {
+    background: rgb(255 255 255 / 0.045);
+    border: 1px solid var(--color-line);
+    border-radius: 1.1rem;
+  }
+  .glass-soft {
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid var(--color-line);
+    border-radius: 0.85rem;
+  }
+
+  /* ---- controls ---- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    min-height: 2.75rem; padding: 0 1.15rem; border-radius: 999px;
+    font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color .15s ease, border-color .15s ease, opacity .15s ease, color .15s ease, filter .15s ease;
+  }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .btn-primary { color: var(--color-on-accent); background-image: linear-gradient(135deg, #bda6ff, #9473ff); }
+  .btn-primary:not(:disabled):hover { filter: brightness(1.08); }
+  .btn-primary[aria-disabled="true"]:not(:disabled) { opacity: .8; } /* no topic yet: still clearly the main action */
+  /* A disabled primary button must still be legible: flat neutral instead of a faded accent. */
+  .btn-primary:disabled { opacity: 1; background-image: none; background-color: var(--color-hover); color: var(--color-fg-muted); border-color: var(--color-line-strong); }
+  .btn-ghost { color: var(--color-fg-muted); background: transparent; border-color: var(--color-line-strong); }
+  .btn-ghost:not(:disabled):hover { background: rgb(255 255 255 / 0.08); color: var(--color-fg); }
+  .btn-danger { color: var(--color-bad); background: rgb(255 143 158 / 0.08); border-color: rgb(255 143 158 / 0.4); }
+  .btn-danger:not(:disabled):hover { background: rgb(255 143 158 / 0.16); }
+
+  /* ---- chips: neutral by default; colour only when it carries meaning ---- */
+  .chip {
+    display: inline-flex; align-items: center; gap: .3rem; border-radius: 999px;
+    padding: .1rem .6rem; font-size: .72rem; font-weight: 600; line-height: 1.5;
+    border: 1px solid var(--color-line-strong); background: transparent; color: var(--color-fg-muted);
+  }
+  .chip-accent { color: var(--color-accent-hi); border-color: rgb(167 139 250 / 0.45); background: rgb(167 139 250 / 0.12); }
+  .chip-ok     { color: var(--color-ok);   border-color: rgb(125 219 176 / 0.4); background: rgb(125 219 176 / 0.1); }
+  .chip-warn   { color: var(--color-warn); border-color: rgb(243 180 105 / 0.42); background: rgb(243 180 105 / 0.1); }
+  .chip-bad    { color: var(--color-bad);  border-color: rgb(255 143 158 / 0.42); background: rgb(255 143 158 / 0.1); }
+
+  /* inline citation chips inside prose: footnote-like markers */
+  .cite {
+    display: inline-flex; align-items: center; justify-content: center; vertical-align: 0.12em;
+    margin: 0 .1rem; padding: 0 .3rem; min-width: 1.45rem; height: 1.1rem;
+    font-family: var(--font-sans); font-size: .64rem; font-weight: 700; line-height: 1; color: var(--color-accent-hi); cursor: pointer;
+    background: rgb(167 139 250 / 0.1); border: 1px solid rgb(167 139 250 / 0.32); border-radius: 4px;
+  }
+  .cite:hover { background: rgb(167 139 250 / 0.26); border-color: rgb(167 139 250 / 0.6); }
+  .source-flash { animation: flash 1.6s ease; }
+
+  /* Report prose: ~68 characters per line, generous leading, softer colour. */
+  .prose-report { max-width: 68ch; color: var(--color-fg-soft); font-size: 1.0625rem; line-height: 1.8; }
+
+  .animate-fade-up { animation: fade-up .4s ease both; }
+
+  /* ---- the orb: a small glass planet that marks "ready" (home) and "working" (progress) ---- */
+  .orb {
+    position: relative; width: var(--orb, 5.25rem); height: var(--orb, 5.25rem); border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 26%, rgb(255 255 255 / .9) 0 4%, rgb(255 255 255 / 0) 22%),
+      radial-gradient(circle at 70% 78%, rgb(120 150 255 / .75), rgb(120 150 255 / 0) 55%),
+      radial-gradient(circle at 50% 50%, #b79bff 0%, #7a4dff 46%, #3a1d8f 78%, #1c0f4d 100%);
+    box-shadow:
+      0 0 3.2rem rgb(140 100 255 / .55),
+      0 0 7rem rgb(120 80 255 / .28),
+      inset -0.5rem -0.7rem 1.3rem rgb(8 4 30 / .5),
+      inset 0.35rem 0.45rem 1rem rgb(255 255 255 / .22);
+    animation: orb-float 7s ease-in-out infinite;
+  }
+  .orb::after { /* thin rim light */
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 210deg, rgb(255 255 255 / 0), rgb(255 255 255 / .35), rgb(255 255 255 / 0) 35%);
+    mask: radial-gradient(circle, transparent 62%, #000 64%, #000 67%, transparent 69%);
+    -webkit-mask: radial-gradient(circle, transparent 62%, #000 64%, #000 67%, transparent 69%);
+    /* static on purpose: a spinning mask inside a floating parent forces a repaint every frame (measured: 9% CPU) */
+  }
+  /* "working" state: a soft ring that breathes outward. Opacity + transform only, so it runs on the compositor. */
+  .orb-pulse::before {
+    content: ""; position: absolute; inset: -14%; border-radius: 50%;
+    box-shadow: 0 0 2.2rem 0.2rem rgb(150 115 255 / .7);
+    opacity: .2; animation: orb-ring 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes flash { 0%, 100% { box-shadow: 0 0 0 0 rgb(201 184 255 / 0); } 20% { box-shadow: 0 0 0 3px rgb(201 184 255 / .85); } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes orb-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.55rem); } }
+@keyframes orb-ring { 0%, 100% { opacity: .15; transform: scale(.96); } 50% { opacity: .75; transform: scale(1.08); } }
+
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent-hi); outline-offset: 2px; border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}
